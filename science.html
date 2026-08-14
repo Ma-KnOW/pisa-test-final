@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PISA Kids Interactive Learning</title>
+    
+    <!-- ฟอนต์ Mali สไตล์การ์ตูนน่ารัก -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Mali', cursive, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ================= ปรับแต่งภาพพื้นหลัง ================= */
+        body {
+            background-image: url('bg.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #3b82f6;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 15px;
+        }
+
+        /* ================= ปุ่ม Menu ไป index.html (มุมบนซ้าย) ================= */
+        .top-left-bar {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            z-index: 1002;
+        }
+
+        .btn-menu {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+            padding: 8px 18px;
+            border-radius: 30px;
+            border: 3px solid #ffffff;
+            background: linear-gradient(180deg, #ff7675 0%, #d63031 100%);
+            box-shadow: 0 4px 0 #8b1d1e, 0 6px 12px rgba(0, 0, 0, 0.3);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 1.05rem;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.12s ease;
+        }
+
+        .btn-menu:hover {
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 6px 0 #8b1d1e, 0 8px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-menu:active {
+            transform: translateY(3px) scale(0.96) !important;
+            box-shadow: 0 1px 0 #8b1d1e !important;
+        }
+
+        /* ================= แถบควบคุมด้านบนขวา (ปุ่ม Home) ================= */
+        .top-nav-bar {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            display: flex;
+            gap: 12px;
+            z-index: 1002;
+        }
+
+        .btn-gold {
+            position: relative;
+            overflow: hidden;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 3px solid #ffe57f;
+            background: radial-gradient(circle at 35% 30%, #fff176 0%, #fbc02d 50%, #f57f17 100%);
+            box-shadow: 0 5px 0 #b26a00, 0 8px 15px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: #5d3900;
+            font-weight: 800;
+            transition: transform 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.12s ease;
+            user-select: none;
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 #b26a00, 0 10px 18px rgba(0, 0, 0, 0.6);
+        }
+
+        .btn-gold:active {
+            transform: translateY(4px) scale(0.95) !important;
+            box-shadow: 0 1px 0 #b26a00, 0 3px 5px rgba(0, 0, 0, 0.4) !important;
+        }
+
+        /* ================= ส่วนหน้าหลัก (หมวดหมู่) ================= */
+        .app-container {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .brand-logo {
+            font-size: 2.6rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 2px 2px 0px #000;
+            margin-bottom: 5px;
+        }
+
+        .brand-logo span { color: #ffeb3b; }
+
+        /* ป้ายคำแนะนำบอกให้ปัดซ้าย-ขวา */
+        .swipe-hint-badge {
+            background: rgba(0, 0, 0, 0.65);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            color: #ffffff;
+            padding: 6px 18px;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: bounceHint 1.8s infinite ease-in-out;
+            user-select: none;
+            margin-bottom: 12px;
+        }
+
+        @keyframes bounceHint {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+
+        .cards-scroll-wrapper {
+            width: 100%;
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 20px 15px 35px 15px;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .cards-scroll-wrapper::-webkit-scrollbar { display: none; }
+
+        .category-card {
+            position: relative;
+            overflow: hidden;
+            flex: 0 0 280px;
+            height: 380px;
+            border-radius: 36px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 15px 25px 15px;
+            cursor: pointer;
+            scroll-snap-align: center;
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.15s ease;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.4);
+            border: 4px solid #ffffff;
+            user-select: none;
+        }
+
+        .category-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.6);
+        }
+
+        .category-card:active {
+            transform: translateY(4px) scale(0.97) !important;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4) !important;
+        }
+
+        .card-top-tab {
+            position: absolute;
+            top: -16px;
+            width: 140px;
+            height: 20px;
+            border-radius: 12px 12px 0 0;
+            border: 4px solid #ffffff;
+            border-bottom: none;
+        }
+
+        .card-piti { background: linear-gradient(180deg, #9ae6b4 0%, #68d391 100%); }
+        .card-piti .card-top-tab { background: #48bb78; }
+
+        .card-soon-1 { background: linear-gradient(180deg, #b794f4 0%, #805ad5 100%); opacity: 0.9; }
+        .card-soon-1 .card-top-tab { background: #6b46c1; }
+
+        .card-soon-2 { background: linear-gradient(180deg, #fbd38d 0%, #ed8936 100%); opacity: 0.9; }
+        .card-soon-2 .card-top-tab { background: #dd6b20; }
+
+        .card-illustration {
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.35);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 15px;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .card-illustration img {
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
+        }
+
+        .card-badge-tag {
+            background: rgba(0, 0, 0, 0.7);
+            color: #ffffff;
+            padding: 8px 24px;
+            border-radius: 25px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            pointer-events: none;
+        }
+
+        .card-number {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            background: #ffffff;
+            color: #222;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 800;
+            pointer-events: none;
+        }
+
+        /* ================= เครื่องเล่น Intro Video (Non-skippable) ================= */
+        .intro-player-container {
+            display: none;
+            width: 100%;
+            max-width: 850px;
+            background: #000000;
+            border-radius: 24px;
+            border: 4px solid #ffffff;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+            overflow: hidden;
+            position: relative;
+            animation: popIn 0.3s ease-out;
+        }
+
+        .intro-video {
+            width: 100%;
+            display: block;
+            background: #000;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        @media (min-width: 769px) {
+            .intro-video {
+                aspect-ratio: 16 / 9;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .intro-player-container {
+                max-width: 360px;
+                border-radius: 20px;
+            }
+            .intro-video {
+                aspect-ratio: 9 / 16;
+                max-height: 75vh;
+            }
+        }
+
+        /* ================= การ์ดกล่องคำถาม ================= */
+        .quiz-card {
+            display: none;
+            background: #ffffff;
+            color: #222222;
+            width: 100%;
+            max-width: 650px;
+            padding: 30px 24px;
+            border-radius: 28px;
+            border: 4px solid #222222;
+            box-shadow: 10px 10px 0px #222222;
+            position: relative;
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .quiz-header .sub-badge {
+            display: inline-block;
+            background: #ff5252;
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .quiz-header h2 {
+            font-size: 1.25rem;
+            color: #222;
+            line-height: 1.4;
+        }
+
+        .quiz-header p {
+            font-size: 0.95rem;
+            color: #666;
+            margin-top: 6px;
+        }
+
+        .options-grid-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .options-grid-yesno {
+            display: flex;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .btn-choice {
+            position: relative;
+            overflow: hidden;
+            background: #f8fafc;
+            color: #222;
+            border: 3px solid #222;
+            padding: 14px;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px #222;
+            transition: transform 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.12s ease;
+            text-align: center;
+            width: 100%;
+            user-select: none;
+        }
+
+        .btn-yes { background: #dcfce7; }
+        .btn-no { background: #fee2e2; }
+
+        .btn-choice:hover {
+            transform: translateY(-2px);
+            box-shadow: 6px 6px 0px #222;
+        }
+
+        .btn-choice:active {
+            transform: translate(2px, 2px) scale(0.97) !important;
+            box-shadow: 1px 1px 0px #222 !important;
+        }
+
+        /* ================= Modal กล่องเฉลยวิดีโอ (Non-skippable) ================= */
+        .video-modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 15px;
+        }
+
+        .video-modal-card {
+            background: #ffffff;
+            color: #222;
+            width: 100%;
+            max-width: 550px;
+            border-radius: 24px;
+            border: 4px solid #222;
+            padding: 20px;
+            box-shadow: 8px 8px 0 #222;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-video-player {
+            width: 100%;
+            border-radius: 16px;
+            border: 3px solid #222;
+            background: #000;
+            aspect-ratio: 16 / 9;
+            margin-bottom: 15px;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .modal-result-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .modal-result-title.correct { color: #16a34a; }
+        .modal-result-title.wrong { color: #dc2626; }
+
+        .modal-exp-text {
+            font-size: 0.95rem;
+            color: #475569;
+            line-height: 1.45;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .btn-next-step {
+            position: relative;
+            overflow: hidden;
+            background: #f59e0b;
+            color: #ffffff;
+            border: 3px solid #222;
+            border-radius: 16px;
+            padding: 10px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-shadow: 4px 4px 0 #222;
+            cursor: pointer;
+            transition: transform 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.12s ease;
+            user-select: none;
+        }
+
+        .btn-next-step:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 6px 6px 0 #222; 
+        }
+
+        .btn-next-step:active { 
+            transform: translate(2px, 2px) scale(0.97) !important; 
+            box-shadow: 1px 1px 0 #222 !important; 
+        }
+
+        /* เอฟเฟกต์แสงคลื่นกระจาย (Ripple) */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.55);
+            transform: scale(0);
+            animation: rippleEffect 0.45s linear;
+            pointer-events: none;
+        }
+
+        @keyframes rippleEffect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .top-left-bar { top: 10px; left: 10px; }
+            .top-nav-bar { top: 10px; right: 10px; }
+            .btn-menu { padding: 6px 14px; font-size: 0.9rem; }
+            .btn-gold { width: 40px; height: 40px; font-size: 1.1rem; }
+            .options-grid-4 { grid-template-columns: 1fr; }
+            .quiz-card { padding: 24px 16px; }
+            .brand-logo { font-size: 2.2rem; }
+            .swipe-hint-badge { font-size: 0.82rem; padding: 4px 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- แท็กเล่นไฟล์เสียง ตอบถูก / ตอบผิด -->
+    <audio id="soundTrue" preload="auto">
+        <source src="true.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="soundFalse" preload="auto">
+        <source src="false.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- ปุ่ม Menu (มุมบนซ้าย) กลับไป index.html -->
+    <div class="top-left-bar">
+        <a href="index.html" class="btn-menu sound-btn" title="กลับไปหน้ารวมวิชา">
+            <span>📋</span>
+            <span>MENU</span>
+        </a>
+    </div>
+
+    <!-- แถบปุ่มบนขวา (ปุ่มกลับหน้าเลือกบทเรียน) -->
+    <div class="top-nav-bar">
+        <button id="homeBtn" class="btn-gold sound-btn" onclick="backToMenu()" title="กลับหน้าเลือกบทเรียน">🏠</button>
+    </div>
+
+    <!-- 1. เมนูหลักเลือกบทเรียน -->
+    <div id="startScreen" class="app-container">
+        <div class="brand-logo">PISA<span>KIDS</span></div>
+        
+        <!-- ป้ายแนะนำบอกให้ปัดซ้าย-ขวา -->
+        <div class="swipe-hint-badge">
+            <span>👈</span>
+            <span>ปัดซ้าย-ขวาเพื่อเลือกบทเรียน</span>
+            <span>👉</span>
+        </div>
+
+        <div class="cards-scroll-wrapper">
+            <div class="category-card card-piti sound-btn" onclick="playIntroVideo()">
+                <div class="card-top-tab"></div>
+                <div class="card-number">1</div>
+                <div class="card-illustration">
+                    <img src="piti.png" alt="Piti" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><text y=\'.9em\' font-size=\'90\'>👦</text></svg>'">
+                </div>
+                <div class="card-badge-tag">ปิติกับอุณหภูมิ</div>
+            </div>
+
+            <div class="category-card card-soon-1 sound-btn" onclick="alert('หมวดที่ 2 กำลังพัฒนา เร็วๆ นี้ครับ!')">
+                <div class="card-top-tab"></div>
+                <div class="card-number">2</div>
+                <div class="card-illustration" style="font-size: 4rem;">🧪</div>
+                <div class="card-badge-tag">เร็วๆ นี้ (Soon)</div>
+            </div>
+
+            <div class="category-card card-soon-2 sound-btn" onclick="alert('หมวดที่ 3 กำลังพัฒนา เร็วๆ นี้ครับ!')">
+                <div class="card-top-tab"></div>
+                <div class="card-number">3</div>
+                <div class="card-illustration" style="font-size: 4rem;">🚀</div>
+                <div class="card-badge-tag">เร็วๆ นี้ (Soon)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. เครื่องเล่นวิดีโอ Intro (ไม่มีแถบกรอเวลา / กดข้ามไม่ได้) -->
+    <div id="introPlayerContainer" class="intro-player-container">
+        <video id="introVideo" class="intro-video" playsinline disablepictureinpicture controlslist="nodownload nofullscreen noremoteplayback">
+            <source id="introVideoSrc" src="" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- 3. กล่องคำถามหลัก (ข้อ 1) -->
+    <div id="mainQuizCard" class="quiz-card">
+        <div class="quiz-header">
+            <span class="sub-badge">คำถามหลัก</span>
+            <h2>ผ่านไป 10 นาที อุณหภูมิของกาแฟและน้ำแร่น่าจะเป็นเท่าใด?</h2>
+            <p>วางถ้วยไว้ในห้องอุณหภูมิ 20°C (กาแฟเริ่มต้น 90°C / น้ำแร่เริ่มต้น 5°C)</p>
+        </div>
+        <div class="options-grid-4">
+            <button class="btn-choice sound-btn" onclick="selectMainChoice('A')">ก) 70°C และ 10°C</button>
+            <button class="btn-choice sound-btn" onclick="selectMainChoice('B')">ข) 90°C และ 5°C</button>
+            <button class="btn-choice sound-btn" onclick="selectMainChoice('C')">ค) 70°C และ 25°C</button>
+            <button class="btn-choice sound-btn" onclick="selectMainChoice('D')">ง) 20°C และ 20°C</button>
+        </div>
+    </div>
+
+    <!-- 4. กล่องคำถามย่อย (รองรับชุดโจทย์จากข้อ ข, ค และ ง) -->
+    <div id="subQuizCard" class="quiz-card">
+        <div class="quiz-header">
+            <span class="sub-badge" id="subBadgeText">ข้อคำถามย่อย</span>
+            <p id="subTopicIntro" style="color: #ea580c; font-weight: bold; margin-bottom: 8px;"></p>
+            <h2 id="subQuestionText"></h2>
+        </div>
+        <div class="options-grid-yesno">
+            <button class="btn-choice btn-yes sound-btn" onclick="answerSubQuestion(true)">👍 ใช่</button>
+            <button class="btn-choice btn-no sound-btn" onclick="answerSubQuestion(false)">👎 ไม่ใช่</button>
+        </div>
+    </div>
+
+    <!-- 5. Modal กล่องเฉลยวิดีโอ (ไม่มีแถบกรอเวลา / กดข้ามไม่ได้) -->
+    <div id="videoModal" class="video-modal-overlay">
+        <div class="video-modal-card">
+            <video id="modalVideo" class="modal-video-player" playsinline disablepictureinpicture controlslist="nodownload nofullscreen noremoteplayback">
+                <source id="modalVideoSrc" src="" type="video/mp4">
+            </video>
+            <div id="modalTitle" class="modal-result-title"></div>
+            <p id="modalExp" class="modal-exp-text"></p>
+            <button id="modalActionBtn" class="btn-next-step sound-btn" onclick="handleModalNext()">ถัดไป ➡️</button>
+        </div>
+    </div>
+
+<script>
+    const audioTrue = document.getElementById('soundTrue');
+    const audioFalse = document.getElementById('soundFalse');
+
+    function playResultSound(isCorrect) {
+        if (isCorrect) {
+            audioTrue.currentTime = 0;
+            audioTrue.play().catch(() => {});
+        } else {
+            audioFalse.currentTime = 0;
+            audioFalse.play().catch(() => {});
+        }
+    }
+
+    let audioCtx;
+    function playClickSound() {
+        try {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(450, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.08);
+
+            gain.gain.setValueAtTime(0.28, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.09);
+        } catch (e) {}
+    }
+
+    document.addEventListener('pointerdown', function (e) {
+        const button = e.target.closest('.sound-btn');
+        if (!button) return;
+
+        if (!button.classList.contains('btn-choice')) {
+            playClickSound();
+        }
+
+        const circle = document.createElement('span');
+        const diameter = Math.max(button.clientWidth, button.clientHeight);
+        const radius = diameter / 2;
+        const rect = button.getBoundingClientRect();
+
+        circle.style.width = circle.style.height = `${diameter}px`;
+        circle.style.left = `${e.clientX - rect.left - radius}px`;
+        circle.style.top = `${e.clientY - rect.top - radius}px`;
+        circle.classList.add('ripple');
+
+        const ripple = button.getElementsByClassName('ripple')[0];
+        if (ripple) {
+            ripple.remove();
+        }
+        button.appendChild(circle);
+    });
+
+    function lockVideoSeeking(videoElement) {
+        let maxTimeWatched = 0;
+
+        videoElement.addEventListener('timeupdate', function () {
+            if (!videoElement.seeking) {
+                if (videoElement.currentTime > maxTimeWatched) {
+                    maxTimeWatched = videoElement.currentTime;
+                }
+            }
+        });
+
+        videoElement.addEventListener('seeking', function () {
+            if (videoElement.currentTime > maxTimeWatched) {
+                videoElement.currentTime = maxTimeWatched;
+            }
+        });
+
+        videoElement.addEventListener('play', function () {
+            if (videoElement.currentTime === 0) {
+                maxTimeWatched = 0;
+            }
+        });
+    }
+
+    const startScreen = document.getElementById('startScreen');
+    const introPlayerContainer = document.getElementById('introPlayerContainer');
+    const introVideo = document.getElementById('introVideo');
+    const introVideoSrc = document.getElementById('introVideoSrc');
+    const mainQuizCard = document.getElementById('mainQuizCard');
+    const subQuizCard = document.getElementById('subQuizCard');
+    
+    const videoModal = document.getElementById('videoModal');
+    const modalVideo = document.getElementById('modalVideo');
+    const modalVideoSrc = document.getElementById('modalVideoSrc');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalExp = document.getElementById('modalExp');
+    const modalActionBtn = document.getElementById('modalActionBtn');
+
+    lockVideoSeeking(introVideo);
+    lockVideoSeeking(modalVideo);
+
+    let currentSet = '';
+    let currentSubStep = 1;
+
+    function playIntroVideo() {
+        startScreen.style.display = 'none';
+        introPlayerContainer.style.display = 'block';
+
+        const isMobile = window.innerWidth <= 768 || window.matchMedia("(orientation: portrait)").matches;
+
+        introVideoSrc.src = isMobile ? 'intro_mobile.mp4' : 'intro.mp4';
+        introVideo.load();
+        introVideo.play().catch(() => {});
+    }
+
+    introVideo.addEventListener('ended', function() {
+        introPlayerContainer.style.display = 'none';
+        mainQuizCard.style.display = 'block';
+    });
+
+    function selectMainChoice(choice) {
+        if (choice === 'A') {
+            playResultSound(true);
+            openExplanationModal({
+                videoFile: 'ending_A.mp4',
+                isCorrect: true,
+                title: "✅ ถูกต้องยอดเยี่ยม! (ตอบข้อ ก)",
+                exp: "เนื่องจากความร้อนถ่ายโอนจากอุณหภูมิสูงไปต่ำ กาแฟจึงเย็นลง และน้ำแร่จะอุ่นขึ้น แต่เวลา 10 นาทียังไม่เพียงพอที่จะปรับจนเท่ากับอุณหภูมิห้อง (20°C)",
+                btnText: "กลับสู่เมนูหลัก 🏠",
+                action: 'back_home'
+            });
+        } else if (choice === 'B') {
+            playResultSound(false);
+            startSubQuestions('SET_B');
+        } else if (choice === 'C') {
+            playResultSound(false);
+            startSubQuestions('SET_C');
+        } else if (choice === 'D') {
+            playResultSound(false);
+            startSubQuestions('SET_D');
+        }
+    }
+
+    function startSubQuestions(set) {
+        currentSet = set;
+        currentSubStep = 1;
+        mainQuizCard.style.display = 'none';
+        subQuizCard.style.display = 'block';
+        renderSubQuestion();
+    }
+
+    function renderSubQuestion() {
+        const badge = document.getElementById('subBadgeText');
+        const intro = document.getElementById('subTopicIntro');
+        const qText = document.getElementById('subQuestionText');
+
+        if (currentSet === 'SET_B') {
+            intro.innerText = '"แม้ไม่มีใครแตะต้องเครื่องดื่ม แต่ในช่วง 10 นาทีที่ผ่านมา ข้อใดน่าจะเกิดขึ้น? (ตอบ ใช่ / ไม่ใช่)"';
+            if (currentSubStep === 1) {
+                badge.innerText = "ลองวิเคราะห์อีกครั้ง";
+                qText.innerText = "1. กาแฟยังคง 90°C และน้ำแร่ยังคง 5°C เพราะไม่มีใครแตะต้อง";
+            } else if (currentSubStep === 2) {
+                badge.innerText = "ลองวิเคราะห์อีกครั้ง";
+                qText.innerText = "2. น้ำแร่จะมีอุณหภูมิสูงขึ้นจากเดิม เพราะได้รับความร้อนจากอากาศในห้องที่อุ่นกว่า";
+            } else if (currentSubStep === 3) {
+                badge.innerText = "ลองวิเคราะห์อีกครั้ง";
+                qText.innerText = "3. กาแฟจะมีอุณหภูมิลดลงจากเดิม เพราะคายความร้อนสู่อากาศ";
+            }
+        } else if (currentSet === 'SET_C') {
+            intro.innerText = '"ถ้าเหตุการณ์ทั้งหมดเป็นจริง ข้อใดอธิบายได้ดีที่สุดว่า ทำไมคำตอบ 70°C และ 25°C จึงมีปัญหา? (ตอบ ใช่ / ไม่ใช่)"';
+            if (currentSubStep === 1) {
+                badge.innerText = "ลองวิเคราะห์อีกครั้ง";
+                qText.innerText = "ก. กาแฟสามารถเย็นลงได้เมื่ออยู่ในห้องที่เย็นกว่า";
+            } else if (currentSubStep === 2) {
+                badge.innerText = "ลองวิเคราะห์อีกครั้ง";
+                qText.innerText = "ข. น้ำแร่ควรได้รับความร้อนจากอากาศในห้อง";
+            } else if (currentSubStep === 3) {
+                badge.innerText = "ลองวิเคราะห์อีกครั้ง";
+                qText.innerText = "ค. หากไม่มีแหล่งความร้อนอื่น น้ำแร่ไม่ควรมีอุณหภูมิสูงกว่าห้องถึง 25°C";
+            }
+        } else if (currentSet === 'SET_D') {
+            intro.innerText = '"ถ้าปิติกลับมาแล้วพบว่ากาแฟและน้ำแร่มีอุณหภูมิ 20°C เท่ากับห้องทั้งคู่ เขาควรสงสัยอะไร? (ตอบ ใช่ / ไม่ใช่)"';
+            if (currentSubStep === 1) {
+                badge.innerText = "ลองวิเคราะห์อีกครั้ง";
+                qText.innerText = "ก. เครื่องดื่มทุกชนิดจะมีอุณหภูมิเท่ากับห้องทันทีที่วางไว้";
+            } else if (currentSubStep === 2) {
+                badge.innerText = "ลองวิเคราะห์อีกครั้ง";
+                qText.innerText = "ข. อุณหภูมิของเครื่องดื่มมีแนวโน้มเข้าใกล้อุณหภูมิห้องเมื่อเวลาผ่านไป";
+            } else if (currentSubStep === 3) {
+                badge.innerText = "ลองวิเคราะห์อีกครั้ง";
+                qText.innerText = "ค. เวลา 10 นาทีอาจยังไม่เพียงพอสำหรับเครื่องดื่มทั้งสองชนิดที่จะมีอุณหภูมิเท่ากับห้องพอดี";
+            }
+        }
+    }
+
+    function answerSubQuestion(userAnswer) {
+        if (currentSet === 'SET_B') {
+            if (currentSubStep === 1) {
+                const isCorrect = (userAnswer === false);
+                playResultSound(isCorrect);
+                openExplanationModal({
+                    videoFile: 'sub_exp1.mp4',
+                    isCorrect: isCorrect,
+                    title: isCorrect ? "✅ ถูกต้อง! (ตอบ ไม่ใช่)" : "❌ ยังไม่ถูกต้อง (ตอบ ใช่)",
+                    exp: "ถึงแม้ไม่มีใครแตะต้อง แต่ความร้อนจะถ่ายโอนกับอากาศในห้องตลอดเวลา ทำให้อุณหภูมิไม่เท่าเดิมแน่นอน",
+                    btnText: "ไปข้อ 2 ต่อไป ➡️",
+                    action: 'go_step2'
+                });
+            } else if (currentSubStep === 2) {
+                const isCorrect = (userAnswer === true);
+                playResultSound(isCorrect);
+                openExplanationModal({
+                    videoFile: 'sub_exp2.mp4',
+                    isCorrect: isCorrect,
+                    title: isCorrect ? "✅ ถูกต้อง! (ตอบ ใช่)" : "❌ ยังไม่ถูกต้อง (ตอบ ไม่ใช่)",
+                    exp: "น้ำแร่อุณหภูมิ 5°C อยู่ในห้อง 20°C ความร้อนจากอากาศจะถ่ายโอนเข้าสู่น้ำแร่ ทำให้อุณหภูมิสูงขึ้น",
+                    btnText: "ไปข้อ 3 ต่อไป ➡️",
+                    action: 'go_step3'
+                });
+            } else if (currentSubStep === 3) {
+                const isCorrect = (userAnswer === true);
+                playResultSound(isCorrect);
+                openExplanationModal({
+                    videoFile: 'sub_exp3.mp4',
+                    isCorrect: isCorrect,
+                    title: isCorrect ? "✅ ถูกต้อง! (ตอบ ใช่)" : "❌ ยังไม่ถูกต้อง (ตอบ ไม่ใช่)",
+                    exp: "กาแฟร้อน (90°C) สูงกว่าอุณหภูมิห้อง (20°C) ความร้อนจึงถ่ายโอนออกจากกาแฟสู่อากาศ ทำให้กาแฟเย็นลง",
+                    btnText: "เสร็จสิ้น / กลับหน้าหลัก 🏠",
+                    action: 'back_home'
+                });
+            }
+        } else if (currentSet === 'SET_C') {
+            if (currentSubStep === 1) {
+                const isCorrect = (userAnswer === true);
+                playResultSound(isCorrect);
+                openExplanationModal({
+                    videoFile: 'sub_c1.mp4',
+                    isCorrect: isCorrect,
+                    title: isCorrect ? "✅ ถูกต้อง! (ตอบ ใช่)" : "❌ ยังไม่ถูกต้อง (ตอบ ไม่ใช่)",
+                    exp: "ถูกต้องครับ! กาแฟ 90°C ในห้อง 20°C ย่อมเย็นลงมาที่ 70°C ได้ตามปกติ",
+                    btnText: "ไปข้อ ข ต่อไป ➡️",
+                    action: 'go_step2'
+                });
+            } else if (currentSubStep === 2) {
+                const isCorrect = (userAnswer === true);
+                playResultSound(isCorrect);
+                openExplanationModal({
+                    videoFile: 'sub_c2.mp4',
+                    isCorrect: isCorrect,
+                    title: isCorrect ? "✅ ถูกต้อง! (ตอบ ใช่)" : "❌ ยังไม่ถูกต้อง (ตอบ ไม่ใช่)",
+                    exp: "ถูกต้องครับ! น้ำแร่เย็น (5°C) ควรรับความร้อนจากห้องและอุณหภูมิค่อยๆ สูงขึ้น",
+                    btnText: "ไปข้อ ค ต่อไป ➡️",
+                    action: 'go_step3'
+                });
+            } else if (currentSubStep === 3) {
+                const isCorrect = (userAnswer === true);
+                playResultSound(isCorrect);
+                openExplanationModal({
+                    videoFile: 'sub_c3.mp4',
+                    isCorrect: isCorrect,
+                    title: isCorrect ? "✅ ถูกต้อง! (ตอบ ใช่)" : "❌ ยังไม่ถูกต้อง (ตอบ ไม่ใช่)",
+                    exp: "นี่คือสาเหตุที่ผิดครับ! น้ำแร่ไม่สามารถรับความร้อนจนอุณหภูมิสูงเกินห้อง (25°C) ได้เองโดยไม่มีแหล่งความร้อนอื่น",
+                    btnText: "เสร็จสิ้น / กลับหน้าหลัก 🏠",
+                    action: 'back_home'
+                });
+            }
+        } else if (currentSet === 'SET_D') {
+            if (currentSubStep === 1) {
+                const isCorrect = (userAnswer === false);
+                playResultSound(isCorrect);
+                openExplanationModal({
+                    videoFile: 'sub_d1.mp4',
+                    isCorrect: isCorrect,
+                    title: isCorrect ? "✅ ถูกต้อง! (ตอบ ไม่ใช่)" : "❌ ยังไม่ถูกต้อง (ตอบ ใช่)",
+                    exp: "การถ่ายโอนความร้อนต้องใช้เวลา ไม่สามารถปรับเท่ากับห้องได้ทันทีที่วางไว้ครับ",
+                    btnText: "ไปข้อ ข ต่อไป ➡️",
+                    action: 'go_step2'
+                });
+            } else if (currentSubStep === 2) {
+                const isCorrect = (userAnswer === true);
+                playResultSound(isCorrect);
+                openExplanationModal({
+                    videoFile: 'sub_d2.mp4',
+                    isCorrect: isCorrect,
+                    title: isCorrect ? "✅ ถูกต้อง! (ตอบ ใช่)" : "❌ ยังไม่ถูกต้อง (ตอบ ไม่ใช่)",
+                    exp: "ถูกต้องครับ! เมื่อเวลาผ่านไป วัตถุจะเกิดการถ่ายโอนความร้อนจนมีแนวโน้มเข้าใกล้อุณหภูมิห้อง",
+                    btnText: "ไปข้อ ค ต่อไป ➡️",
+                    action: 'go_step3'
+                });
+            } else if (currentSubStep === 3) {
+                const isCorrect = (userAnswer === true);
+                playResultSound(isCorrect);
+                openExplanationModal({
+                    videoFile: 'sub_d3.mp4',
+                    isCorrect: isCorrect,
+                    title: isCorrect ? "✅ ถูกต้อง! (ตอบ ใช่)" : "❌ ยังไม่ถูกต้อง (ตอบ ไม่ใช่)",
+                    exp: "ถูกต้องที่สุดครับ! เวลาเพียง 10 นาทียังสั้นเกินไปที่จะทำให้ทั้งกาแฟร้อนและน้ำแร่เย็นปรับจนเข้าสู่สมดุลความร้อนที่ 20°C พอดี",
+                    btnText: "เสร็จสิ้น / กลับหน้าหลัก 🏠",
+                    action: 'back_home'
+                });
+            }
+        }
+    }
+
+    let nextModalAction = '';
+    function openExplanationModal({ videoFile, isCorrect, title, exp, btnText, action }) {
+        modalTitle.innerText = title;
+        modalTitle.className = "modal-result-title " + (isCorrect ? "correct" : "wrong");
+        modalExp.innerText = exp;
+        modalActionBtn.innerText = btnText;
+        nextModalAction = action;
+
+        modalVideoSrc.src = videoFile;
+        modalVideo.load();
+        modalVideo.play().catch(() => {});
+
+        videoModal.style.display = 'flex';
+    }
+
+    function handleModalNext() {
+        modalVideo.pause();
+        videoModal.style.display = 'none';
+
+        if (nextModalAction === 'go_step2') {
+            currentSubStep = 2;
+            renderSubQuestion();
+        } else if (nextModalAction === 'go_step3') {
+            currentSubStep = 3;
+            renderSubQuestion();
+        } else if (nextModalAction === 'back_home') {
+            backToMenu();
+        } else if (nextModalAction === 'retry_main') {
+            mainQuizCard.style.display = 'block';
+        }
+    }
+
+    function backToMenu() {
+        introVideo.pause();
+        modalVideo.pause();
+        introPlayerContainer.style.display = 'none';
+        videoModal.style.display = 'none';
+        subQuizCard.style.display = 'none';
+        mainQuizCard.style.display = 'none';
+        startScreen.style.display = 'flex';
+    }
+</script>
+
+</body>
+</html>
